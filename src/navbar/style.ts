@@ -5,7 +5,7 @@ export const Header = styled.div`
     justify-content: space-between;
     width: 100%;
     height: 70px;
-    background-color: #101010;
+    background-color: #c3b8b8;;
     padding: 10px;
     box-shadow: 0px 5px 20px #000;
     align-items: center;
@@ -25,14 +25,7 @@ export const Header = styled.div`
     }
     
     .menu li a:hover {
-        background-color: aquamarine;
+        background-color: #707998;
     }
-    
-    .logo {
-        width: 45px;
-        height: 45px;
-    
-        border-radius: 10px;
-        background-color: #ccc ;
-    }
+  
 `;

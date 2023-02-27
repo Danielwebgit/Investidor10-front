@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 import List from '../post/List';
-import { Container } from './style';
+import { Container, Links } from './style';
 
 const Inicial = () => {
 
@@ -38,12 +38,20 @@ const Inicial = () => {
                 <div className="but-div">
                 
                 </div>
-                <Link to='/atualizar' className='link-action'>
-                  <Button onClick={() => setData(data)}>Acessar</Button>
-                  <Button onClick={() => setData(data)}>Deletar</Button>
-                  <Button onClick={() => setData(data)}>Atualizar</Button>
+                <Links className='link-action'>
+                  <Link to='/vizualizar'>
+                    <Button onClick={() => setData(data)}>Acessar</Button>
+                  </Link>
 
-                </Link>
+                  <Link to='/delete'>
+                  <Button onClick={() => setData(data)}>Deletar</Button>
+                  </Link>
+
+                  <Link to='/atualizar'>
+                  <Button onClick={() => setData(data)}>Atualizar</Button>
+                  </Link>
+                </Links>
+                
               </div>
             </div>)}
         </Container>

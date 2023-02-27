@@ -17,7 +17,7 @@ export const Container = styled.div`
         display: flex;
         flex-direction: column;
         height: 400px;
-        width: 300px;
+        width: 327px;
         background-color: #ccc;
         border-radius: 10px;
         margin-top: 34px;
@@ -59,4 +59,8 @@ export const Container = styled.div`
         flex: 1 1 300px;
         margin: 10px;
     }
+`;
+
+export const Links = styled.div`
+
 `;
