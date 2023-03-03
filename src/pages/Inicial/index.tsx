@@ -1,23 +1,45 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
+import { UsersState } from '../../interfaces';
+import store from '../../redux/store';
+import { fetchPosts, fetchUsers } from '../../redux/store/fetchActions';
 import List from '../post/List';
 import { Container, Links } from './style';
 
 const Inicial = () => {
 
   const [APIData, setAPIData] = useState([]);
+  
+  const dispatch = useDispatch();
+
+  const auth = useSelector(state=> state);
+
+  console.log(auth)
+
+  const  user = useSelector((state: UsersState) => state.users);
+  console.log(user);
 
   useEffect(() => {
     axios.get(`http://localhost:8990/api/posts`)
       .then((response) => {
         setAPIData(response.data.data);
       })
+      
+      store.dispatch(fetchPosts());
+      store.dispatch(fetchUsers());
+
+
+      //const  user = useSelector((state: UsersState) => state.users);
+      //console.log(user);
+      
+
   }, [])
 
   const setData = (data: any) => {
-    console.log(data);
+    //console.log(data);
  }
 
   {

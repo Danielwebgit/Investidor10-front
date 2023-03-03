@@ -1,26 +1,25 @@
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Inicial from '../pages/Inicial';
-import Create from '../pages/post/Create';
-import Update from '../pages/post/Update';
-import SingIn from '../pages/SignIn';
-import {AuthState} from '../interfaces'
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { AuthState } from '../interfaces';
+import Inicial from './Inicial';
+import Create from './post/Create';
+import SingIn from './SignIn';
 
-export const AppRoutes = () => {
+function PrivateRoute({children}: any) {
 
-    function PrivateRoute({children}: any) {
+    const  isAuthentication = useSelector((state: AuthState) => state.auth.isAuthentication);
 
-        const isAuthentication = useSelector((state: AuthState) => state.auth.isAuthentication);
-    
-        if (isAuthentication) {
-            return children
-          }
-            
-          return <Navigate to="/login" />
-    }
+    if (isAuthentication) {
+        return children
+      }
+        
+      return <Navigate to="/login" />
+}
 
-    return (
-        <Routes>
+
+export default () => (
+    <Routes>
             
             <Route path='/login' element={<SingIn/>}/>
             
@@ -44,5 +43,4 @@ export const AppRoutes = () => {
 
             <Route path='*' element={<Navigate to="login" />}/>
         </Routes>
-    )
-}
+);
