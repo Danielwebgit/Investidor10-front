@@ -7,7 +7,9 @@ import { HeaderContent } from "./style";
 
 export default function Header() {
 
-	const  isAuthentication = useSelector((state: AuthState) => state.auth.isAuthentication);
+    // = useSelector((state: AuthState) => state.auth.isAuthentication);
+
+	const  isAuthentication = true;
     
     return (
 		    
@@ -26,6 +28,7 @@ export default function Header() {
                     ) : ""}
                     
                     <li><NavLink to="/login" className="nav-link"> LOGIN </NavLink></li>
+                    <li><NavLink to="/logout" className="nav-link"> LOGOUT </NavLink></li>
                 </ul>
         </HeaderContent>
 

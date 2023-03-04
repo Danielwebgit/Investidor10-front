@@ -10,7 +10,10 @@ import { useSelector } from 'react-redux';
 import { login } from '../../redux/store/fetchActions';
 
 import store from "../../redux/store";
-import { AuthState } from "../../interfaces";
+import { AuthState, UsersState } from "../../interfaces";
+import apiService from "../../Services/apiService";
+import { validTokenService } from "../../Services";
+import api from "../../Services/api";
 
 
 
@@ -19,20 +22,42 @@ const SingIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const isAuthentication = useSelector((state: AuthState) => state.auth.isAuthentication);
+    const isAuthentication = useSelector((state: AuthState) => state.token);
+    const  user = useSelector((state: UsersState) => state.users);
+    console.log(user);
+    const [token, setToken] = useState('');
+
+    interface User {
+      id: number;
+      name: string;
+      email: string;
+    }
+
+    const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
-            
-        if(isAuthentication){
-            navigate('/pagina-inicial')
-        }
         
-    }, [isAuthentication])
+        const fetchUsers = async () => {
+          const data: any = await api.post('/validate-token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0Ojg5OTAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2Nzc4OTg3NTgsImV4cCI6MTY3NzkwMjM1OCwibmJmIjoxNjc3ODk4NzU4LCJqdGkiOiI2SXFDOGJPV2djM3NVWDBvIiwic3ViIjoiMTIiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.rTxaOqk6CthYBpl3wVmCM7ZH7QabpNAiBpDdY8yxrIc' );
+          console.log(data)
+          setUsers(data);
+        };
+       
+        fetchUsers();
+        console.log(users)
+        
+
+        // if(token){
+        //   //console.log(validTokenService.validToken(token));
+        // }
+        //if(isAuthentication)
+        //console.log("ddd")
+          //navigate('/pagina-inicial');
+        
+        
+    }, [])
 
     const handleSignIn = async (e: any) => {
-
-        
-        
         e.preventDefault();
         store.dispatch(login(email, password));        
     }

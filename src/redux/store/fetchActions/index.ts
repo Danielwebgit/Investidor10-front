@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import api from '../../../Services/apiService';
 import axios from 'axios';
-//import jwt_decode, { JwtPayload } from 'jwt-decode';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
+import { loginSub } from '../ducks/auth'
 
 
 interface User {
@@ -62,10 +62,47 @@ export const fetchUsersRequest = () => {
     };
   };
 
-  export const loginSuccess = (token: string, user: JwtPayload) => ({
-    type: 'LOGIN_SUCCESS',
+  // export const loginSuccess = (token: string, user: JwtPayload) => ({
+  //   type: 'LOGIN_SUCCESS',
+  //   payload: { token, user }
+  // });
+
+  // export const loginSuccess = (token: any) => ({
+  //   type: 'LOGIN_SUCCESS',
+  //   payload: token
+  // });
+
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+
+
+  interface LoginSuccessAction {
+    type: typeof LOGIN_SUCCESS;
+    payload: {
+      token: string;
+      user: JwtPayload;
+    };
+  }
+
+  interface LoginFailureAction {
+    type: typeof LOGIN_FAILURE;
+    payload: string;
+  }
+  
+  export type AuthActionTypes = LoginSuccessAction | LoginFailureAction;
+
+  export const loginSuccess = (token: string, user: JwtPayload): AuthActionTypes => ({
+    type: LOGIN_SUCCESS,
     payload: { token, user }
   });
+  
+
+  // export const loginSuccess = (token: string, user: JwtPayload) => ({
+  //   type: 'LOGIN_SUCCESS',
+  //   payload: { token, user }
+  // });
+
+  
 
 
 export const fetchUsers = () => {
@@ -105,14 +142,15 @@ export const login = (email: string, password: string) => {
 
     return (dispatch: any) => {
         axios.post('http://localhost:8990/api/auth/login', {email, password})
-      .then(response => {
+        .then(response => {
         const  token  = response.data;
-        console.log(token.access_token)
 
         localStorage.setItem('token', token.access_token);
+        console.log(token.access_token)
         const decoded = jwtDecode<JwtPayload>(token.access_token);
+        
+        //dispatch(loginSub());
         dispatch(loginSuccess(token, decoded));
-        //navigate("/pagina-inicial");
       })
       .catch(error => {
         const errorMessage = error.message;

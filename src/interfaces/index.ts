@@ -35,5 +35,9 @@
     posts: Post[];
     error: string;
   }
+
+  export interface Token {
+    exp: number;
+  }
   
   

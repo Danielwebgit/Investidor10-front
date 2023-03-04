@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8989'
+const BACKEND_URL = 'http://localhost:8990'
 
 /**
  * API URL
