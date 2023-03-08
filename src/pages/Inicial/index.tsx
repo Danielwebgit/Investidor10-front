@@ -1,83 +1,99 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
-import { UsersState } from '../../interfaces';
-import store from '../../redux/store';
+import { RootState } from '../../redux/store';
 import { fetchPosts, fetchUsers } from '../../redux/store/fetchActions';
-import List from '../post/List';
+import Post from '../Post';
+
 import { Container, Links } from './style';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+export interface AuthState {
+  auth: {
+      isAuthentication: boolean;
+      user: User | null;
+      token: string | null;
+  };
+}
+
+interface Posts {
+  data: {
+    id: number;
+    title: string;
+    text: string;
+  }
+}
+
+export interface PostState {
+  
+  data: {
+    posts: Posts[]
+  }
+}
 
 const Inicial = () => {
 
-  const [APIData, setAPIData] = useState([]);
-  
   const dispatch = useDispatch();
-
-  const auth = useSelector(state=> state);
-
-  console.log(auth)
-
-  const  user = useSelector((state: UsersState) => state.users);
-  console.log(user);
+  const { auth } = useSelector((state: AuthState): {auth: any}  => ({auth: state.auth}));
+  const  { posts }  = useSelector((state: RootState): any => ({posts: state.posts.posts}));
 
   useEffect(() => {
-    axios.get(`http://localhost:8990/api/posts`)
-      .then((response) => {
-        setAPIData(response.data.data);
-      })
-      
-      store.dispatch(fetchPosts());
-      store.dispatch(fetchUsers());
 
+    dispatch(fetchPosts());
 
-      //const  user = useSelector((state: UsersState) => state.users);
-      //console.log(user);
-      
+  }, [dispatch])
 
-  }, [])
+  const getPostById = (postId: any) => {
 
-  const setData = (data: any) => {
-    //console.log(data);
- }
+    //return <Post postId={postId}></Post>
 
+  }
+
+  
   {
     return (
-      <div className="App">
-        <Container className='container'>
-          {APIData.map((data, index) =>
-  
-            <div>
-              <div className="bloco">
-                <div className="titulo">
-                  <h3>{data['post']['title']}</h3>
-                </div>
-                <div className="post">
-                  <p>{data['post']['text']}</p>
-                </div>
-                <span>Por: {data['post']['autor']['name']}</span>
-                <div className="but-div">
+      <>  
+        <div className="App">
+          <Container className='container'>
+            {posts.length != 0 ? posts.data.map((item: any, index: any) =>
+            
+              <div>
                 
+                <div className="bloco">
+                  <div className="titulo">
+                    <h3>{item['post']['title']}</h3>
+                  </div>
+                  <div className="post">
+                    <p>{item['post']['text']}</p>
+                  </div>
+                  <span>Por: {item['post']['autor']['name']}</span>
+                  <div className="but-div">
+                  
+                  </div>
+                  <Links className='link-action'>
+                    <Link to={'/post/'+item['post']['id']}>
+                      <Button onClick={() =>getPostById(item['post']['id'])} >Acessar</Button>
+                    </Link>
+
+                    <Link to='/delete'>
+                    <Button >Deletar</Button>
+                    </Link>
+
+                    <Link to='/atualizar'>
+                    <Button >Atualizar</Button>
+                    </Link>
+                  </Links>
+                  
                 </div>
-                <Links className='link-action'>
-                  <Link to='/vizualizar'>
-                    <Button onClick={() => setData(data)}>Acessar</Button>
-                  </Link>
-
-                  <Link to='/delete'>
-                  <Button onClick={() => setData(data)}>Deletar</Button>
-                  </Link>
-
-                  <Link to='/atualizar'>
-                  <Button onClick={() => setData(data)}>Atualizar</Button>
-                  </Link>
-                </Links>
-                
-              </div>
-            </div>)}
-        </Container>
-      </div>
+              </div>) : null}
+          </Container>
+        </div>
+      </>
     )
 
   }

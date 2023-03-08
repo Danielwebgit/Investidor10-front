@@ -1,25 +1,39 @@
-import { useSelector } from 'react-redux';
+import jwtDecode from 'jwt-decode';
+import { Provider, useSelector } from 'react-redux';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Inicial from '../pages/Inicial';
+import Post from '../pages/Post';
 import Create from '../pages/post/Create';
-import Update from '../pages/post/Update';
 import SingIn from '../pages/SignIn';
-import { AuthState } from '../redux/store/ducks/auth/interfaces'
-import isTokenValidd from '../Services/isTokenValidService';
+import store from '../redux/store';
 
 export const AppRoutes = () => {
 
+
+    interface Token {
+        exp: number;
+      }
+
+    function checkIsAuthenticated()  {
+        const token = localStorage.getItem('token');
+      
+        if (!token) {
+          return false;
+        }
+      
+        try {
+            const decodedToken = jwtDecode<Token>(token);
+            const expirationDate = new Date(decodedToken.exp * 1000);
+            const now = new Date();
+            return now < expirationDate;
+        } catch (err) {
+          return false;
+        }
+      }
+
     function PrivateRoute({children}: any) {
-        // = 
-        const isAuthentication = useSelector((state: AuthState) => state.auth.isAuthentication);
-       console.log(isAuthentication)
-    
-        if (isTokenValidd('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0Ojg5OTAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2Nzc4OTg3NTgsImV4cCI6MTY3NzkwMjM1OCwibmJmIjoxNjc3ODk4NzU4LCJqdGkiOiI2SXFDOGJPV2djM3NVWDBvIiwic3ViIjoiMTIiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.rTxaOqk6CthYBpl3wVmCM7ZH7QabpNAiBpDdY8yxrIc')) {
-            console.log("válido")
-          } else {
-            console.log("N válido")
-          }
-        if (isAuthentication) {
+        
+        if (checkIsAuthenticated()) {
             return children
           }
             
@@ -27,6 +41,7 @@ export const AppRoutes = () => {
     }
 
     return (
+        <Provider store={store}>
         <Routes>
             
             <Route path='/login' element={<SingIn/>}/>
@@ -50,15 +65,17 @@ export const AppRoutes = () => {
             />
 
             <Route
-                path="/cadastrar"
+                path="/post/:postId"
                 element={
                     <PrivateRoute>
-                        <Create/>
+                        <Post />
                     </PrivateRoute>
                     }
+                    
             />
 
             <Route path='*' element={<Navigate to="login" />}/>
         </Routes>
+        </Provider>
     )
 }

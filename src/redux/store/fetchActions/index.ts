@@ -1,9 +1,16 @@
+import { AuthState } from './../../../interfaces/index';
+import { useSelector } from 'react-redux';
+//import { loginSuccess } from '../../auth4/slice';
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
-import api from '../../../Services/apiService';
+import api from '../../../Services/api';
 import axios from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import { loginSub } from '../ducks/auth'
+import { loginSuccess } from '../ducks/auth';
+import { fetchPostsSuccess } from '../ducks/post';
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
 
 
 interface User {
@@ -48,12 +55,12 @@ export const fetchUsersRequest = () => {
     };
   };
 
-  export const fetchPostsSuccess = (users: Post[]) => {
-    return {
-      type: 'FETCH_POSTS_SUCCESS',
-      payload: users
-    };
-  };
+  // export const fetchPostsSuccess = (users: Post[]) => {
+  //   return {
+  //     type: 'FETCH_POSTS_SUCCESS',
+  //     payload: users
+  //   };
+  // };
 
   export const fetchPostsFailure = (error: string) => {
     return {
@@ -91,10 +98,10 @@ export const LOGIN_FAILURE = 'LOGIN_FAILURE';
   
   export type AuthActionTypes = LoginSuccessAction | LoginFailureAction;
 
-  export const loginSuccess = (token: string, user: JwtPayload): AuthActionTypes => ({
-    type: LOGIN_SUCCESS,
-    payload: { token, user }
-  });
+  // export const loginSuccess = (token: string, user: JwtPayload): AuthActionTypes => ({
+  //   type: LOGIN_SUCCESS,
+  //   payload: { token, user }
+  // });
   
 
   // export const loginSuccess = (token: string, user: JwtPayload) => ({
@@ -102,7 +109,16 @@ export const LOGIN_FAILURE = 'LOGIN_FAILURE';
   //   payload: { token, user }
   // });
 
+export const getPostById = (postId: any) => {
   
+  return (dispatch: any) => {
+       api.get(`/dashboard/posts/show/${postId}`).then((response) => {
+        console.log(response);
+        
+    });
+    
+  }
+}
 
 
 export const fetchUsers = () => {
@@ -121,13 +137,30 @@ export const fetchUsers = () => {
     }
 }
 
-export const fetchPosts = () => {
+export const addPost = (title: any, text: any, user_id: any) => {
+  return (dispatch: any) => {
+   
+    const response = api.post('/dashboard/posts/store', {title, text, user_id});
+    console.log(response);
+  }
+}
+
+export const fetchPosts = (): any => {
+  
     return (dispatch: any) => {
+      
+      const config = {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token'),
+          'Content-Type': 'application/json'
+        }
+      };
+
         dispatch(fetchPostsRequest());
-        axios.get('http://localhost:8990/api/posts')
+        axios.get('http://localhost:8990/api/dashboard/posts', config)
       .then(response => {
         const posts = response.data;
-        console.log(response.data)
+  
         dispatch(fetchPostsSuccess(posts));
       })
       .catch(error => {
@@ -140,22 +173,29 @@ export const fetchPosts = () => {
 
 export const login = (email: string, password: string) => {
 
-    return (dispatch: any) => {
-        axios.post('http://localhost:8990/api/auth/login', {email, password})
-        .then(response => {
-        const  token  = response.data;
+  
+  return (dispatch: any) => {
 
-        localStorage.setItem('token', token.access_token);
-        console.log(token.access_token)
-        const decoded = jwtDecode<JwtPayload>(token.access_token);
+      api.post('/auth/login', {email, password}).then((response) => {
         
-        //dispatch(loginSub());
-        dispatch(loginSuccess(token, decoded));
-      })
-      .catch(error => {
+        const  token  = response.data;
+        localStorage.setItem('token', token.access_token);
+        dispatch(loginSuccess());
+        toast.success(response.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: 0,
+          toastId: "my_toast",
+        })
+    }).catch(error => {
+      
         const errorMessage = error.message;
         dispatch(fetchPostsFailure(errorMessage));
-      });
+    })
     }
 }
 

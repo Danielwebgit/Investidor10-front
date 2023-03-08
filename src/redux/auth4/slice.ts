@@ -1,5 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export interface AuthState {
+    isLoggedIn: number;
+  }
+
   const initialState = {
     auth: {
         isAuthentication: false,
@@ -20,7 +24,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
     },
   });
-  
+
   export default authSlice.reducer;
   export const { loginSuccess } = authSlice.actions;
 

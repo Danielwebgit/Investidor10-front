@@ -22,11 +22,11 @@ const SingIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const isAuthentication = useSelector((state: AuthState) => state.token);
+    const posts = useSelector((state) => state);
     const  user = useSelector((state: UsersState) => state.users);
-    console.log(user);
-    const [token, setToken] = useState('');
-
+    
+    //const [token, setToken] = useState(isAuthentication);
+    
     interface User {
       id: number;
       name: string;
@@ -34,7 +34,7 @@ const SingIn = () => {
     }
 
     const [users, setUsers] = useState<User[]>([]);
-
+    
     useEffect(() => {
         
         const fetchUsers = async () => {
@@ -44,22 +44,24 @@ const SingIn = () => {
         };
        
         fetchUsers();
-        console.log(users)
-        
-
+        //console.log(isAuthentication)
+        console.log('posts')
+        console.log(posts)
+        console.log('posts')
         // if(token){
         //   //console.log(validTokenService.validToken(token));
         // }
         //if(isAuthentication)
         //console.log("ddd")
-          //navigate('/pagina-inicial');
+        //navigate('/pagina-inicial');
         
         
     }, [])
 
     const handleSignIn = async (e: any) => {
         e.preventDefault();
-        store.dispatch(login(email, password));        
+        store.dispatch(login(email, password));
+        navigate('/pagina-inicial');
     }
 
     return (
