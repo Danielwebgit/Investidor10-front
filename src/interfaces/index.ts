@@ -20,8 +20,9 @@
   
   interface Post {
     id: number;
-    name: string;
-    email: string;
+    title: string;
+    text: string;
+    data: []
   }
   
   export interface UsersState {
@@ -33,7 +34,10 @@
   export interface PostsState {
     loading: boolean;
     posts: Post[];
-    error: string;
+    error: string|null;
+    post: Post[]
+    data: []
+    
   }
 
   export interface Token {

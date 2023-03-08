@@ -1,52 +1,31 @@
-// import { createReducer, createAction } from '@reduxjs/toolkit';
-// import {PostsState} from '../../../../interfaces'
+import { PostsState } from './../../../../interfaces/index';
+import { createSlice } from '@reduxjs/toolkit';
 
-// const initialState: PostsState = {
-//     loading: false,
-//     posts: [],
-//     error: ''
-//   };
-
-// export const fetchPostsSucess = createAction('FETCH_POSTS_SUCCESS');
-// export const fetchPostsRequest= createAction('FETCH_POSTS_REQUEST');
-
-
-// export default createReducer(initialState, {
-//     [fetchPostsSucess.type]: 
-//     (state, action) => (
-//         {
-//             ...state,
-//             loading: false,
-//             posts: action.payload,
-//             error: ''
-//         }),
-
-//     [fetchPostsRequest.type]:
-//     (state, action) => (
-//         {
-//             ...state, 
-//             loading:
-//             true
-//         })
-// });
-
-
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-  const initialState = {
-        posts: []
+  const initialState: PostsState = {
+        posts: [],
+        post: [],
+        loading: false,
+        error: null,
+        data:[]
   };
 
   const postSlice = createSlice({
     name: 'posts',
     initialState,
     reducers: {
-        fetchPostsSuccess(state, action) {
-        state.posts = action.payload;
+        setPosts(state: any, action: any) {
+          state.posts = action.payload;
+      },
+        setPost(state: any, action: any) {
+          state.post = action.payload;
+      },
+        deletePost(state: any, action: any) {
+        const newArrPost: {data: PostsState} = {"data" : JSON.parse(JSON.stringify(state)).posts.data.filter((post: any) => post.post.id != action.payload)}
+        state.posts = newArrPost;
       }
     },
   });
 
   export default postSlice.reducer;
 
-  export const { fetchPostsSuccess } = postSlice.actions;
+  export const { setPosts, setPost, deletePost } = postSlice.actions;

@@ -24,6 +24,9 @@ export const Container = styled.div`
         width: 420px;
         background-color: antiquewhite;
         border-radius: 5px;
+        padding: 10px;
+        font-size: 16px;
+        text-align: justify;
         
     }
 

@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2'
 import { AuthState } from './../../../interfaces/index';
 import { useSelector } from 'react-redux';
 //import { loginSuccess } from '../../auth4/slice';
@@ -7,7 +8,7 @@ import api from '../../../Services/api';
 import axios from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { loginSuccess } from '../ducks/auth';
-import { fetchPostsSuccess } from '../ducks/post';
+import { setPosts, setPost, deletePost } from '../ducks/post';
 import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 
@@ -113,10 +114,9 @@ export const getPostById = (postId: any) => {
   
   return (dispatch: any) => {
        api.get(`/dashboard/posts/show/${postId}`).then((response) => {
-        console.log(response);
-        
+        const post = response.data;
+        dispatch(setPost(post.data.post))
     });
-    
   }
 }
 
@@ -145,6 +145,35 @@ export const addPost = (title: any, text: any, user_id: any) => {
   }
 }
 
+export const deletePostAction = (postId: any): any => {
+
+  return (dispatch: any) => {
+    
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result: any) => {
+        if (result.isConfirmed) {
+          api.delete(`/dashboard/posts/destroy/${postId}`).then((response) => {
+            dispatch(deletePost(postId))
+          });
+
+          Swal.fire(
+            'Deleted!',
+            'Your file has been deleted.',
+            'success'
+          )
+        }
+      })
+    
+  }
+}
+
 export const fetchPosts = (): any => {
   
     return (dispatch: any) => {
@@ -156,12 +185,11 @@ export const fetchPosts = (): any => {
         }
       };
 
-        dispatch(fetchPostsRequest());
+        //dispatch(fetchPostsRequest());
         axios.get('http://localhost:8990/api/dashboard/posts', config)
       .then(response => {
         const posts = response.data;
-  
-        dispatch(fetchPostsSuccess(posts));
+        dispatch(setPosts(posts));
       })
       .catch(error => {
         const errorMessage = error.message;
